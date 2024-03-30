@@ -1,0 +1,165 @@
+MemLabs Lab 2 - A New World
+
+Challenge description
+One of the clients of our company, lost the access to his system due to an unknown error. He is supposedly a very popular "environmental" activist. 
+As a part of the investigation, he told us that his go to applications are browsers, his password managers etc. 
+We hope that you can dig into this memory dump and find his important stuff and give it back to us.
+
+Note: This challenge is composed of 3 flags.
+
+The commpressed archive
+
+MD5 hash: 75d2ee1fcf2bc8a25329723e6ce2be93 [Verified]
+
+The memory dump
+
+MD5 hash: ddb337936a75153822baed718851716b
+
+!--------------------------------------------!
+!    NOTE: Will need KeePass to continue	 !
+!--------------------------------------------!
+
+FLAGS: 
+
+1:	
+	flag{w3lc0m3_T0_$T4g3_!_Of_L4B_2}
+2:
+	flag{w0w_th1s_1s_Th3_SeC0nD_ST4g3_!!}
+3:
+	flag{oK_So_Now_St4g3_3_is_DoNE!!}
+	
+imageinfo output: 
+
+	[		
+		Volatility Foundation Volatility Framework 2.6
+		INFO    : 
+		   volatility.debug    : Determining profile based on KDBG search...
+		  Suggested Profile(s) : Win7SP1x64, Win7SP0x64, Win2008R2SP0x64, Win2008R2SP1x64_23418, Win2008R2SP1x64, Win7SP1x64_23418
+                     AS Layer1 : WindowsAMD64PagedMemory (Kernel AS)
+                     AS Layer2 : FileAddressSpace (/home/kali/Desktop/MemoryDump_Lab2.raw)
+                      PAE type : No PAE
+                           DTB : 0x187000L
+                          KDBG : 0xf800027f20a0L
+          Number of Processors : 1
+     Image Type (Service Pack) : 1
+                KPCR for CPU 0 : 0xfffff800027f3d00L
+             KUSER_SHARED_DATA : 0xfffff78000000000L
+           Image date and time : 2019-12-14 10:38:46 UTC+0000
+     Image local date and time : 2019-12-14 16:08:46 +0530
+
+	]
+
+Notable Processes
+	cmd.exe		 PID 2906
+	keepass.exe  PID 3008
+	explorer.exe PID 1064
+	
+	Multiple chrome.exe PID:
+		2296
+		2904
+		2476
+		2964
+		2572
+		1632
+
+cmd.exe > nothing :(
+
+"environmental" - quoted, checked environment variables on image:
+
+Found: ZmxhZ3t3M2xjMG0zX1QwXyRUNGczXyFfT2ZfTDRCXzJ9
+
+Base64 decoder in python returned: flag{w3lc0m3_T0_$T4g3_!_Of_L4B_2}
+
+keepass.exe
+
+dumped cmdline found: 
+
+************************************************************************
+KeePass.exe pid:   3008
+Command line : "C:\Program Files (x86)\KeePass Password Safe 2\KeePass.exe" 
+"C:\Users\SmartNet\Secrets\Hidden.kdbx"
+************************************************************************
+
+Notepad was also accessing this location:
+
+************************************************************************
+notepad.exe pid:   3260
+Command line : "C:\Windows\system32\NOTEPAD.EXE" 
+C:\Users\SmartNet\Secrets\Hidden.kdbx
+************************************************************************
+
+
+Run filescan plugin to find physicla location of Hidden.kdbx
+
+Physical location is: 
+
+0x000000003fb112a0     16      0 R--r-- \Device\HarddiskVolume2\Users\SmartNet\Secrets\Hidden.kdbx
+
+Saved file as Hidden.kdbx
+
+kdbx files are used by the KeePass to be used as a password safe
+
+Requires KeePass (free) to open filetype - install later
+
+
+Installed KeePass! 
+
+Hidden.kdbx is password protected
+
+Conducted filescan for image and using | grep password 
+
+Output: 
+	[
+	Volatility Foundation Volatility Framework 2.6
+	0x000000003e868370     16      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.exe.config
+	0x000000003e873070      8      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.exe
+	0x000000003e8ef2d0     13      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.exe
+	0x000000003e8f0360      4      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.XmlSerializers.dll
+	0x000000003eaf7880     15      1 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.XmlSerializers.dll
+	0x000000003fb0abc0     10      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePassLibC64.dll
+	0x000000003fce1c70      1      0 R--r-d \Device\HarddiskVolume2\Users\Alissa Simpson\Pictures\Password.png
+	0x000000003fd62f20      2      0 R--r-- \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\KeePass.config.xml
+	0x000000003fecf820     15      0 R--r-d \Device\HarddiskVolume2\Program Files (x86)\KeePass Password Safe 2\unins000.exe
+	]
+
+Use dumpfiles on this file with physical location 0x000000003fce1c70:
+
+	0x000000003fce1c70      1      0 R--r-d \Device\HarddiskVolume2\Users\Alissa Simpson\Pictures\Password.png
+	
+Extracted false negative - saying "nothing here" - in bottom corner we see "pssst, password is P4SSw0rd_123"
+
+Passwords from Hidden.kdbx
+
+Users:      Password:           
+
+stuxn3t     nothing here bro
+R3x         not here bro :)
+s0rc3r3r    your princess is in another castle
+f4lc0n      boom boom :)
+
+Found deleted entry in KeePass by the name of Sabka Baap
+
+Password: flag{w0w_th1s_1s_Th3_SeC0nD_ST4g3_
+
+chrome.exe
+
+Ran filescan to find chrome history
+
+Output 
+	[
+	Volatility Foundation Volatility Framework 2.6
+	0x000000003fa3e430     17      1 RW-rw- \Device\HarddiskVolume2\Users\SmartNet\AppData\Local\Google\Chrome\User Data\Default\History-journal
+	0x000000003fcfb1d0     18      1 RW-rw- \Device\HarddiskVolume2\Users\SmartNet\AppData\Local\Google\Chrome\User Data\Default\History
+	0x000000003fd4a670     16      0 R--rw- \Device\HarddiskVolume2\Users\SmartNet\AppData\Local\Google\Chrome\User Data\Default\History-journal
+	]
+	
+Dumped: 
+	0x000000003fcfb1d0     18      1 RW-rw- \Device\HarddiskVolume2\Users\SmartNet\AppData\Local\Google\Chrome\User Data\Default\History
+
+Converted file to .db - browsed via DB Browser for SQL lite
+
+Found following url:
+ 
+https://mega.nz/#F!TrgSQQTS!H0ZrUzF0B-ZKNM3y9E76lg
+
+Password protected with clue SHA1{Lab1_Flag3} 

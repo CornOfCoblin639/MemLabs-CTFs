@@ -1,0 +1,183 @@
+Memlabs challenge 1
+
+Challenge description
+
+My sister's computer crashed. We were very fortunate to recover this memory dump. 
+Your job is get all her important files from the system. 
+From what we remember, we suddenly saw a black window pop up with some thing being executed. 
+When the crash happened, she was trying to draw something. Thats all we remember from the time of crash.
+
+Note: This challenge is composed of 3 flags.
+
+Challenge file: MemLabs_Lab1
+
+Challenge file hash
+
+MD5 hash: 919a0ded944c427b7f4e5c26a6790e8d (VERIFIED)
+
+Using Kali Distro and volatility framework
+
+FLAGS:
+1:	
+	flag{th1s_1s_th3_1st_st4g3!!}
+2: 
+	flag{Good_Boy_good_girl}
+3:
+	flag3{w3ll_3rd_stage_was_easy}
+
+
+Ran:
+	./volatility -f MemoryDump_Lab1.raw imageinfo
+	
+	Output [
+	
+	Volatility Foundation Volatility Framework 2.6
+	INFO    : volatility.debug    : Determining profile based on KDBG search...
+          Suggested Profile(s) : Win7SP1x64, Win7SP0x64, Win2008R2SP0x64, Win2008R2SP1x64_23418, Win2008R2SP1x64, Win7SP1x64_23418
+                     AS Layer1 : WindowsAMD64PagedMemory (Kernel AS)
+                     AS Layer2 : FileAddressSpace (/home/kali/Desktop/MemoryDump_Lab1.raw)
+                      PAE type : No PAE
+                           DTB : 0x187000L
+                          KDBG : 0xf800028100a0L
+          Number of Processors : 1
+     Image Type (Service Pack) : 1
+                KPCR for CPU 0 : 0xfffff80002811d00L
+             KUSER_SHARED_DATA : 0xfffff78000000000L
+           Image date and time : 2019-12-11 14:38:00 UTC+0000
+     Image local date and time : 2019-12-11 20:08:00 +0530
+
+	
+	]
+	
+	
+	./volatility -f MemoryDump_Lab1.raw pslist
+	
+	Interesting Processes -
+	
+	cmd.exe     PID 1984
+	
+	console command dump gave us:
+	
+	[
+	
+		C:\Users\SmartNet>St4G3$1                                                       
+		ZmxhZ3t0aDFzXzFzX3RoM18xc3Rfc3Q0ZzMhIX0=                                        
+		Press any key to continue . . .                                                 
+		**************************************************
+		ConsoleProcess: conhost.exe Pid: 2260
+		-------------//--------------
+		Screen 0x371050 X:80 Y:300
+		Dump:
+		  DumpIt - v1.3.2.20110401 - One click memory memory dumper                     
+		  Copyright (c) 2007 - 2011, Matthieu Suiche <http://www.msuiche.net>           
+		  Copyright (c) 2010 - 2011, MoonSols <http://www.moonsols.com>                 
+                                                                                
+                                                                                
+			Address space size:        1073676288 bytes (   1023 Mb)                    
+			Free space size:          24185389056 bytes (  23064 Mb)                    
+																						
+			* Destination = \??\C:\Users\SmartNet\Downloads\DumpIt\SMARTNET-PC-20191211-
+			143755.raw                                                                      
+																						
+			--> Are you sure you want to continue? [y/n] y                              
+			+ Processing...                                     
+
+	]
+		Hash output:
+		
+		ZmxhZ3t0aDFzXzFzX3RoM18xc3Rfc3Q0ZzMhIX0= - flag{th1s_1s_th3_1st_st4g3!!} - Possible algorithms: Base64 Encoded String
+		
+	
+    Investigate conhost.exe PID: 2260?? 
+	
+	
+	
+	mspaint.exe PID 2424
+	
+	Install GIMP and dump memory of mspaint
+	
+	volatility FLAGS: memdump -p 242 --dump-dir lab1_mspaint_dump >> outputted to 2424.dmp 
+	
+	changed to 2424.data to open in GIMP
+	
+	Changing offsets in editor 
+	Trial 1:
+	Options selected
+		offset: 4787975
+		width: 615
+		height: 4105
+		
+		Flag in image (after roating and flipping) 
+		
+		flag{Good_Boy_good_girl}
+		
+	
+	
+	winrar.exe 	PID 1512
+	
+	Running ./volatility -f MemoryDump_Lab1.raw --profile=Win7SP1x64 cmdline  
+	
+	Gives us a list of processes - Winrar appears: 
+	
+	************************************************************************
+	WinRAR.exe pid:   1512
+	Command line : "C:\Program Files\WinRAR\WinRAR.exe" "C:\Users\Alissa Simpson\Documents\Important.rar"
+	************************************************************************
+	
+	Ran ./volatility -f MemoryDump_Lab1.raw --profile=Win7SP1x64 filescan | grep Important.rar
+		
+		This finds the physical memory location of Important.rar
+		Output:
+		Volatility Foundation Volatility Framework 2.6
+			{
+			0x000000003fa3ebc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+			0x000000003fac3bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+			0x000000003fb48bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+			}
+		Important.rar is stored at one of the above locations - we dump this to a file using: 
+		
+		 ./volatility -f MemoryDump_Lab1.raw --profile=Win7SP1x64 dumpfiles -Q 0x000000003fb48bc0 -D lab1_mspaint_dump
+		 
+		 -Q : specifies physical location of memory
+		 -D : specifies the file to dump to
+		 
+		 We rename the file extension to .rar and the file to important "important.rar"
+		 
+		 Trying to unrar we are prompted with Alissa's password, using NTLM Hash - we will get a hashdump of the memory
+	
+	./volatility -f MemoryDump_Lab1.raw --profile=Win7SP1x64 hashdump
+	
+		Output:
+		{
+		
+		Volatility Foundation Volatility Framework 2.6
+		Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+		Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+		SmartNet:1001:aad3b435b51404eeaad3b435b51404ee:4943abb39473a6f32c11301f4987e7e0:::
+		HomeGroupUser$:1002:aad3b435b51404eeaad3b435b51404ee:f0fc3d257814e08fea06e63c5762ebd5:::
+		Alissa Simpson:1003:aad3b435b51404eeaad3b435b51404ee:f4ff64c8baac57d22f22edc681055ba6:::
+
+		}
+		
+		Interpretting this information:
+		"Windows stores two hashes with each password, delimited by colons. The first one is an extremely insecure, obsolete hash using the LANMAN algorithm. 
+		Windows operating systems since Vista no longer use LANMAN hashes, so they are filled with a dummy value starting with “aad”.
+
+		The second hash is the newer NTLM hash, which is much better than LANMAN hashes, 
+		but still extremely insecure and much more easily cracked than Linux or Mac OS X hashes."
+		
+	Password hash: f4ff64c8baac57d22f22edc681055ba6
+	
+	Password described as hash but in upper case - inputted F4FF64C8BAAC57D22F22EDC681055BA6 
+	
+	Found flag.png in Important.rar 
+	
+	flag3{w3ll_3rd_stage_was_easy}
+	
+	Done!
+	
+	
+	
+
+		
+	

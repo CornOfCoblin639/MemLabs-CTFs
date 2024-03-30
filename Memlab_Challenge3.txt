@@ -1,0 +1,207 @@
+MemLabs Lab 3 - The Evil's Den
+
+Challenge Description
+A malicious script encrypted a very secret piece of information I had on my system. Can you recover the information for me please?
+
+Note-1: This challenge is composed of only 1 flag. The flag split into 2 parts.
+
+Note-2: You'll need the first half of the flag to get the second.
+
+You will need this additional tool to solve the challenge,
+
+$ sudo apt install steghide
+
+Steghide info:
+
+	Introduction:
+	Steghide is a steganography program that is able to hide data in various kinds of image- and audio-files. 
+	The color-respectivly sample-frequencies are not changed thus making the embedding resistant against first-order statistical tests.
+	The current version is 0.5.1.	
+
+	Features:
+
+	compression of embedded data
+	encryption of embedded data
+	embedding of a checksum to verify the integrity of the extraced data
+	support for JPEG, BMP, WAV and AU files
+
+The flag format for this lab is: inctf{s0me_l33t_Str1ng}
+
+FLAG: inctf{0n3_h4lf_1s_n0t_3n0ugh}
+
+Challenge file hash
+The commpressed archive
+
+MD5 hash: c41a03bc57b6965ce3f9dbc9df19ba10
+The memory dump
+
+MD5 hash: ce4e7adc4efbf719888d2c87256d1da3
+
+pslist interesting exe:
+
+msiexec.exe 
+notepad.exe
+
+filescan output interesting artefacts:
+
+These three seem connected - will enumerate further:
+
+0x0000000003f7cbd0      8      0 R--r-d \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\hello@google[1].txt
+
+Output 
+	[
+	CGIC
+	InJpbWFnZS9qcGVnLCBhcHBsaWNhdGlvbi94LW1zLWFwcGxpY2F0aW9uLCBpbWFnZS9naWYsIGFwcGxpY2F0aW9uL3hhbWwreG1sLCBpbWFnZS9wanBlZywgYXBwbGljYXRpb24veC1tcy14YmFwLCAqLyo
+	google.com/complete/search
+	9728
+	707635712
+	30726903
+	145428864
+	30690166
+	*
+	]
+	
+0x000000003e1f2438      8      0 R--r-d \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\hello@msn[2].txt
+
+Output 
+	[
+	   PreferencesMsn
+eyJIb21lUGFnZSI6eyJTdHJpcGVzIjpbXSwiTWVTdHJpcGVNb2R1bGVzIjpbXSwiTWFya2V0Q29uZmlndXJhdGlvbiI6eyJNYXJrZXQiOiJlbi1pbiIsIlN1cHByZXNzUHJvbXB0IjpmYWxzZSwiUHJlZmVycmVkTGFuZ3VhZ2VDb2RlIjoiZW4tdXMiLCJDb3VudHJ5Q29kZSI6IklOIn19LCJFeHBpcnlUaW1lIjo2MzcwNDEzNDExMDA2MTIyODAsIlZlcnNpb24iOjF90
+msn.com/
+9728
+1493828352
+30763938
+3767314448
+30690512
+*
+marketPref
+en-in
+msn.com/
+9728
+1493828352
+30763938
+3767314448
+30690512
+*
+_EDGE_V
+1
+msn.com/
+9728
+2103296768
+30768967
+3769664448
+30690512
+*
+MUID
+0ED54CBAB0B06BF7154140D1B1E26AD2
+msn.com/
+1024
+2183296768
+30768967
+3831714448
+30690512
+*
+
+	]
+
+
+
+0x000000003de17140      8      0 R--r-d \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\hello@google[3].txt
+
+Output
+[
+
+CGIC
+InJpbWFnZS9qcGVnLCBhcHBsaWNhdGlvbi94LW1zLWFwcGxpY2F0aW9uLCBpbWFnZS9naWYsIGFwcGxpY2F0aW9uL3hhbWwreG1sLCBpbWFnZS9wanBlZywgYXBwbGljYXRpb24veC1tcy14YmFwLCAqLyo
+google.com/search
+9728
+707635712
+30726903
+145428864
+30690166
+*
+     
+
+]
+
+
+0x000000003e727e50      8      0 -W-rw- \Device\HarddiskVolume2\Users\hello\Desktop\vip.txt
+0x000000003def96c0      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\LWI9BFUE.txt
+0x000000003deafc98      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\EPWAWUMI.txt
+0x000000003de4d9d0      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\BE0ALKBZ.txt
+0x000000003de36828      1      0 R--r-- \Device\HarddiskVolume2\Windows\Installer\$PatchCache$\Managed\348E4C01622CFDF3D96D4F3E72E537D4\CacheSize.txt
+0x000000003d7e6960      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\BP1T1L21.txt
+0x000000003da5fa98      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\X1FN6ESA.txt
+0x000000003d4c92e8      8      0 -W---- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Cookies\Low\3QXXZB2K.txt
+0x0000000035ca5eb8      8      0 -W-rwd \Device\HarddiskVolume2\Users\hello\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5\T98W2EYD\e7-424fe6-8a01ca32[1].txt
+
+File outputs: 
+
+vip.txt 
+
+am1gd2V4M20wXGs3b2U=
+
+search cmdline output: 
+
+************************************************************************
+notepad.exe pid:   3736
+Command line : "C:\Windows\system32\NOTEPAD.EXE" C:\Users\hello\Desktop\evilscript.py
+************************************************************************
+
+filescan for evilscript.py
+
+Returned: 
+
+Volatility Foundation Volatility Framework 2.6
+0x000000003de1b5f0      8      0 R--rw- \Device\HarddiskVolume2\Users\hello\Desktop\evilscript.py.py
+0x000000003e727490      2      0 RW-rw- \Device\HarddiskVolume2\Users\hello\AppData\Roaming\Microsoft\Windows\Recent\evilscript.py.lnk
+
+opened evilscript.py with text editor: 
+
+import sys
+import string
+
+def xor(s):
+
+        a = ''.join(chr(ord(i)^3) for i in s)
+        return a
+
+
+def encoder(x):
+
+        return x.encode("base64")
+
+
+if __name__ == "__main__":
+
+        f = open("C:\\Users\\hello\\Desktop\\vip.txt", "w")
+
+        arr = sys.argv[1]
+
+        arr = encoder(xor(arr))
+
+        f.write(arr)
+
+        f.close()
+                   
+
+Reverse engineering the above in cyberchef:
+	From Base64 to XOR*3
+	flag first half: 
+		inctf{0n3_h4lf_1s_n0t_3n0ugh}
+
+	
+Moving on - found a JPEG in filescan: 
+
+Volatility Foundation Volatility Framework 2.6
+0x0000000004f34148      2      0 RW---- \Device\HarddiskVolume2\Users\hello\Desktop\suspision1.jpeg
+
+Extracted image - code 557455741 on front of image. --nothing
+
+Using steghide to extract data - its password protected.
+
+extracted secret.txt using steghide - got find part of flag
+
+Flag: inctf{0n3_h4lf_1s_n0t_3n0ugh}
+
+
